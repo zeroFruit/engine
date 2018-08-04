@@ -1,26 +1,27 @@
 language: go
 go:
- - "1.10"
-
-# Don't email me the results of the test runs.
+- '1.10'
 notifications:
   email: false
-
 services:
-  - rabbitmq
-
+- rabbitmq
 git:
   depth: 1
-
 script:
- - diff <(goimports -d $(find . -type f -name '*.go' -not -path "./vendor/*")) <(printf "")
- - go test -v ./...
-
-os: linux
-
+- diff <(goimports -d $(find . -type f -name '*.go' -not -path "./vendor/*")) <(printf
+  "")
+- go test -v ./...
+- go test -v -covermode=count -coverprofile=coverage.out
+- $GOPATH/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+os:
+- linux
 before_install:
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-  - go get golang.org/x/tools/cmd/goimports
-
+- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+- go get golang.org/x/tools/cmd/goimports
+- go get golang.org/x/tools/cmd/cover
+- go get github.com/mattn/goveralls
 install:
-  - dep ensure
+- dep ensure
+env:
+  global:
+    secure: 6Q+9M5dB3d2vO/HHH2nyAGtfqKQ6QvEg+cL4PITTvNe9uTIMvfbZbmXA3pfeEQV1a6JVT7imwGJq0/zrjHzPgevy2uUc620A3jNIDxyUE2FH7Nh6S4WB6FIDoh75Aa26NDxfHV/qH+Y8/jhK/jjsID5yrnPVoxDZVkzHwHB+WJEhEwK5y0wLq6Re8mvFONmXoajpY2xz4xKZulSiOZXkWN3tr7wKu50JPbK3Y3cMnnEedGZQp3nlPXpLS7sDHgom0wWCwlJb30iLWabv75uMT+N9s161Gb1NFT/jPNG07sxObZAyG6sojI/dt/ifqewp+zApJvFiOvqq3CUYICCpTwiNUEE9+DssUiR8MGa6zyEddiPn80+kongilaPPTPyTjHaZiJut7FTDJM1Upj9HXyrccELUGPI+B0jj3i5WE5n4pGujSFv5SCJxtO9IlMBhXZVz6mYnzg0bBt/LfUvbSREdKAaB37mXyErxtg94ibwScfqhMsCI5QVhd4Af6y5UMRjVKJZXnLB8Lm/5+sG2n29/50W7Pp2Kx1x08K+qf9Y/AzR0qQ5ONjIP3ba2/CVCLTivgbekpRmk4N3JodR/m5UgfWIfJB6HtNeN9rrl4hTC1/8pwqF3vl+L3Pdu1lLjaBVopTvNnKEtnBlhkzg0f4G+HwT8M3/4Z2KnmMM0yac=
